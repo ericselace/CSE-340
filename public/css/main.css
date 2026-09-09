@@ -1,30 +1,215 @@
-html, body {
-    background-color: lightblue;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
+/* ================================
+   Global Styles
+================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f9;
+    color: #263238;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+}
+
+/* ================================
+   Header & Navigation
+================================ */
+
+nav {
+    background-color: #123c4a;
+    padding: 0.8rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav a {
+    display: block;
+    padding: 0.6rem 0.8rem;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+nav a:hover,
+nav a:focus {
+    background-color: #2a6678;
+    color: #ffffff;
+}
+
+nav a:focus {
+    outline: 3px solid #f4b942;
+    outline-offset: 2px;
+}
+
+/* ================================
+   Main Content
+================================ */
+
+main {
+    width: min(1100px, 92%);
+    margin: 0 auto;
+    padding: 3rem 0;
+    min-height: 70vh;
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #123c4a;
+    font-size: 2.3rem;
+    line-height: 1.2;
+}
+
+h2 {
+    margin-top: 2rem;
+    color: #1f5d70;
+    font-size: 1.5rem;
+}
+
+p {
+    max-width: 800px;
+    margin-bottom: 1.2rem;
+}
+
+/* ================================
+   Images
+================================ */
+
+.main-logo {
+    display: block;
+    width: min(500px, 100%);
+    height: auto;
+    margin: 2rem auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+/* ================================
+   Organizations
+================================ */
+
+main ul {
+    padding-left: 0;
+}
+
+main li {
+    margin-bottom: 1rem;
+}
+
+main ul li {
+    list-style: none;
+}
+
+/* Organization logos */
+
+main li img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin-right: 1rem;
+    vertical-align: middle;
+    border-radius: 8px;
+    background-color: #ffffff;
+    padding: 5px;
+}
+
+/* ================================
+   Projects & Categories
+================================ */
+
+main > ul > li {
+    background-color: #ffffff;
+    margin-bottom: 1rem;
+    padding: 1rem 1.2rem;
+    border-left: 5px solid #2a6678;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ================================
+   Footer
+================================ */
+
+footer {
+    background-color: #123c4a;
+    color: #ffffff;
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+footer p {
+    max-width: none;
+    margin: 0;
+}
+
+/* ================================
+   Responsive Design
+================================ */
+
+@media (max-width: 700px) {
     nav {
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            display: inline;
-            margin-right: 15px;
-        }
-
-        a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-
-            &:hover {
-                color: #0066cc;
-            }
-        }
+        padding: 0.8rem 1rem;
     }
-}                
+
+    nav ul {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    nav a {
+        width: 100%;
+        text-align: center;
+    }
+
+    main {
+        width: 90%;
+        padding: 2rem 0;
+    }
+
+    h1 {
+        font-size: 1.9rem;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+    }
+
+    main li img {
+        width: 55px;
+        height: 55px;
+    }
+}
+
+/* ================================
+   Accessibility
+================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    nav a {
+        transition: none;
+    }
+}
