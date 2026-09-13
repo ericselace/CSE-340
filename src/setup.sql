@@ -34,3 +34,97 @@ VALUES
         'hello@unityserve.org',
         'unityserve-logo.png'
     );
+
+    CREATE TABLE project (
+    project_id SERIAL PRIMARY KEY,
+    organization_id INTEGER NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    location VARCHAR(255),
+    date DATE NOT NULL,
+    FOREIGN KEY (organization_id)
+        REFERENCES organization(organization_id)
+);
+
+
+
+INSERT INTO project
+    (organization_id, title, description, location, date)
+VALUES
+    -- BrightFuture Builders (organization_id = 1)
+    (1, 'Community Center Renovation',
+     'Renovation of a local community center to provide a safe space for residents.',
+     'Lome Community Center',
+     '2026-09-20'),
+
+    (1, 'Sustainable Housing Project',
+     'Construction of affordable homes using sustainable building materials.',
+     'Lome, Togo',
+     '2026-10-05'),
+
+    (1, 'School Building Improvement',
+     'Improvement and repair of classrooms and school facilities.',
+     'Lome Public School',
+     '2026-10-15'),
+
+    (1, 'Clean Water Facility',
+     'Construction of a clean water facility for the local community.',
+     'Agoe, Lome',
+     '2026-10-25'),
+
+    (1, 'Community Park Construction',
+     'Development of a safe and sustainable public park.',
+     'Adidogome, Lome',
+     '2026-11-05'),
+
+    -- GreenHarvest Growers (organization_id = 2)
+    (2, 'Urban Garden Initiative',
+     'Creation of an urban garden to provide fresh vegetables to the community.',
+     'Lome Urban Garden',
+     '2026-09-22'),
+
+    (2, 'Community Farming Workshop',
+     'Workshop teaching residents sustainable farming techniques.',
+     'Tokoin, Lome',
+     '2026-10-02'),
+
+    (2, 'School Garden Project',
+     'Creation of a vegetable garden for students to learn about agriculture.',
+     'Lome Primary School',
+     '2026-10-12'),
+
+    (2, 'Tree Planting Day',
+     'Community tree planting activity promoting environmental sustainability.',
+     'University of Lome',
+     '2026-10-20'),
+
+    (2, 'Food Sustainability Fair',
+     'Community event promoting local agriculture and sustainable food production.',
+     'Lome Exhibition Center',
+     '2026-11-01'),
+
+    -- UnityServe Volunteers (organization_id = 3)
+    (3, 'Neighborhood Cleanup',
+     'Volunteers clean public areas and improve the local environment.',
+     'Bè, Lome',
+     '2026-09-25'),
+
+    (3, 'Food Donation Drive',
+     'Collection and distribution of food to families in need.',
+     'Lome Community Hall',
+     '2026-10-08'),
+
+    (3, 'Elderly Support Day',
+     'Volunteers provide assistance and companionship to elderly community members.',
+     'Lome Senior Center',
+     '2026-10-18'),
+
+    (3, 'Youth Mentoring Program',
+     'Volunteer mentoring program supporting young people in the community.',
+     'Lome Youth Center',
+     '2026-10-28'),
+
+    (3, 'Community Service Day',
+     'A community-wide volunteer event supporting local charities and organizations.',
+     'Lome, Togo',
+     '2026-11-10');

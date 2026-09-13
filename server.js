@@ -1,8 +1,10 @@
 import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
+
 import { testConnection } from './src/models/db.js';
 import { getAllOrganizations } from './src/models/organizations.js';
+import { getAllProjects } from './src/models/projects.js';
 
 // Define the application environment
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
@@ -16,8 +18,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 /**
-  * Configure Express middleware
-  */
+ * Configure Express middleware
+ */
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -28,16 +30,18 @@ app.set('view engine', 'ejs');
 // Tell Express where to find your templates
 app.set('views', path.join(__dirname, 'src/views'));
 
-
-
 /**
  * Routes
  */
+
+// Home
 app.get('/', async (req, res) => {
     const title = 'Home';
+
     res.render('home', { title });
 });
 
+// Organizations
 app.get('/organizations', async (req, res) => {
     const organizations = await getAllOrganizations();
 
@@ -46,22 +50,32 @@ app.get('/organizations', async (req, res) => {
     res.render('organizations', { title, organizations });
 });
 
+// Service Projects
 app.get('/projects', async (req, res) => {
+    const projects = await getAllProjects();
+
     const title = 'Service Projects';
-    res.render('projects', { title });
+
+    res.render('projects', { title, projects });
 });
+
+// Categories
 app.get('/categories', async (req, res) => {
     const title = 'Service Project Categories';
+
     res.render('categories', { title });
 });
 
-
+/**
+ * Start the server
+ */
 app.listen(PORT, async () => {
-  try {
-    await testConnection();
-    console.log(`Server is running at http://127.0.0.1:${PORT}`);
-    console.log(`Environment: ${NODE_ENV}`);
-  } catch (error) {
-    console.error('Error connecting to the database:', error);
-  }
+    try {
+        await testConnection();
+
+        console.log(`Server is running at http://127.0.0.1:${PORT}`);
+        console.log(`Environment: ${NODE_ENV}`);
+    } catch (error) {
+        console.error('Error connecting to the database:', error);
+    }
 });
