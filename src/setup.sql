@@ -128,3 +128,67 @@ VALUES
      'A community-wide volunteer event supporting local charities and organizations.',
      'Lome, Togo',
      '2026-11-10');
+
+       
+
+
+-- ========================================
+-- Category Table
+-- ========================================
+CREATE TABLE category (
+    category_id SERIAL PRIMARY KEY,
+    category_name VARCHAR(100) NOT NULL UNIQUE
+);
+
+
+-- ========================================
+-- Insert sample data: Categories
+-- ========================================
+INSERT INTO category (category_name)
+VALUES
+    ('Community Development'),
+    ('Environmental Sustainability'),
+    ('Education');
+
+
+-- ========================================
+-- Project Category Table
+-- ========================================
+CREATE TABLE project_category (
+    project_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
+
+    PRIMARY KEY (project_id, category_id),
+
+    FOREIGN KEY (project_id)
+        REFERENCES project(project_id),
+
+    FOREIGN KEY (category_id)
+        REFERENCES category(category_id)
+);
+
+-- ========================================
+-- Associate Projects with Categories
+-- ========================================
+INSERT INTO project_category (project_id, category_id)
+VALUES
+    -- BrightFuture Builders
+    (1, 1),
+    (2, 1),
+    (3, 3),
+    (4, 1),
+    (5, 1),
+
+    -- GreenHarvest Growers
+    (6, 2),
+    (7, 2),
+    (8, 3),
+    (9, 2),
+    (10, 2),
+
+    -- UnityServe Volunteers
+    (11, 1),
+    (12, 1),
+    (13, 1),
+    (14, 3),
+    (15, 1);

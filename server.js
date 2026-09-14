@@ -1,3 +1,4 @@
+import { getAllCategories } from './src/models/categories.js';
 import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -61,9 +62,11 @@ app.get('/projects', async (req, res) => {
 
 // Categories
 app.get('/categories', async (req, res) => {
+    const categories = await getAllCategories();
+
     const title = 'Service Project Categories';
 
-    res.render('categories', { title });
+    res.render('categories', { title, categories });
 });
 
 /**
