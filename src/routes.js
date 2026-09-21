@@ -12,7 +12,10 @@ import {
     showProjectDetailsPage
 } from './controllers/projects.js';
 
-import { showCategoriesPage } from './controllers/categories.js';
+import {
+    showCategoriesPage,
+    showCategoryPage
+} from './controllers/categories.js';
 
 import { testErrorPage } from './controllers/errors.js';
 
@@ -25,6 +28,9 @@ router.get('/organizations', showOrganizationsPage);
 router.get('/projects', showProjectsPage);
 
 router.get('/categories', showCategoriesPage);
+
+// Category details page
+router.get('/category/:id', showCategoryPage);
 
 // Project details page
 router.get('/project/:id', showProjectDetailsPage);
