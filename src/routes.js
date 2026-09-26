@@ -4,7 +4,10 @@ import { showHomePage } from './controllers/index.js';
 
 import {
     showOrganizationDetailsPage,
-    showOrganizationsPage
+    showOrganizationsPage,
+    showNewOrganizationForm,
+    processNewOrganizationForm,
+    organizationValidation
 } from './controllers/organizations.js';
 
 import {
@@ -37,6 +40,12 @@ router.get('/project/:id', showProjectDetailsPage);
 
 // Organization details page
 router.get('/organization/:id', showOrganizationDetailsPage);
+
+// Route for new organization page
+router.get('/new-organization', showNewOrganizationForm);
+
+// Route to handle new organization form submission
+router.post('/new-organization', organizationValidation, processNewOrganizationForm);
 
 // Error-handling routes
 router.get('/test-error', testErrorPage);
