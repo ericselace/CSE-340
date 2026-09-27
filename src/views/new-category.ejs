@@ -1,0 +1,34 @@
+<%- include('partials/header', {title}) %>
+
+<main>
+    <h1><%= title %></h1>
+
+    <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+        <ul class="errors">
+            <% errors.forEach(error => { %>
+                <li><%= error.msg %></li>
+            <% }) %>
+        </ul>
+    <% } %>
+
+    <form action="/new-category" method="POST">
+
+        <label for="category_name">Category Name</label>
+
+        <input
+            type="text"
+            id="category_name"
+            name="category_name"
+            value="<%= typeof category_name !== 'undefined' ? category_name : '' %>"
+            required
+            maxlength="100"
+        >
+
+        <button type="submit">Create Category</button>
+
+        <a href="/categories">Cancel</a>
+
+    </form>
+</main>
+
+<%- include('partials/footer') %>

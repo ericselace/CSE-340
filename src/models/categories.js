@@ -24,6 +24,30 @@ const getCategoryById = async (category_id) => {
     return result.rows[0];
 }
 
+const createCategory = async (category_name) => {
+    const query = `
+        INSERT INTO public.category (category_name)
+        VALUES ($1)
+        RETURNING category_id, category_name;
+    `;
+
+    const result = await db.query(query, [category_name]);
+
+    return result.rows[0];
+}
+const updateCategory = async (category_id, category_name) => {
+    const query = `
+        UPDATE public.category
+        SET category_name = $1
+        WHERE category_id = $2
+        RETURNING category_id, category_name;
+    `;
+
+    const result = await db.query(query, [category_name, category_id]);
+
+    return result.rows[0];
+}
+
 const getCategoriesByProject = async (project_id) => {
     const query = `
         SELECT c.category_id, c.category_name
@@ -59,6 +83,7 @@ const getProjectsByCategory = async (category_id) => {
 
     return result.rows;
 }
+
 const assignCategoryToProject = async (categoryId, projectId) => {
     const query = `
         INSERT INTO project_category (category_id, project_id)
@@ -86,6 +111,8 @@ const updateCategoryAssignments = async (projectId, categoryIds) => {
 export { 
     getAllCategories, 
     getCategoryById, 
+    createCategory,
+    updateCategory,
     getCategoriesByProject,
     getProjectsByCategory,
     updateCategoryAssignments

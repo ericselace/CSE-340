@@ -24,6 +24,11 @@ import {
 
 import {
     showCategoriesPage,
+    showNewCategoryForm,
+    processNewCategoryForm,
+    categoryValidation,
+    showEditCategoryForm,
+    processEditCategoryForm,
     showCategoryPage,
     showAssignCategoriesForm,
     processAssignCategoriesForm
@@ -50,6 +55,26 @@ router.post(
 );
 
 router.get('/categories', showCategoriesPage);
+
+// Route to display the new category form
+router.get('/new-category', showNewCategoryForm);
+
+// Route to handle the new category form submission
+router.post(
+    '/new-category',
+    categoryValidation,
+    processNewCategoryForm
+);
+
+// Route to display the edit category form
+router.get('/edit-category/:id', showEditCategoryForm);
+
+// Route to handle the edit category form submission
+router.post(
+    '/edit-category/:id',
+    categoryValidation,
+    processEditCategoryForm
+);
 
 // Category details page
 router.get('/category/:id', showCategoryPage);
