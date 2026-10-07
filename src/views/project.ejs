@@ -40,17 +40,19 @@
         <% }); %>
     </ul>
 
-    <p>
-        <a href="/project/<%= project.project_id %>/assign-categories">
-            Edit Categories
-        </a>
-    </p>
+    <% if (userRole === 'admin') { %>
+        <p>
+            <a href="/project/<%= project.project_id %>/assign-categories">
+                Edit Categories
+            </a>
+        </p>
 
-    <p>
-        <a href="/edit-project/<%= project.project_id %>">
-            Edit Project
-        </a>
-    </p>
+        <p>
+            <a href="/edit-project/<%= project.project_id %>">
+                Edit Project
+            </a>
+        </p>
+    <% } %>
 
 </main>
 

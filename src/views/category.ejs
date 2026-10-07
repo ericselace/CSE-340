@@ -1,26 +1,39 @@
 <%- include('partials/header') %>
 
 <main>
+
     <h1><%= title %></h1>
 
     <h2>Service Projects</h2>
-    <a href="/edit-category/<%= category.category_id %>">
-        Edit Category
-    </a>
+
+    <% if (userRole === 'admin') { %>
+        <a href="/edit-category/<%= category.category_id %>">
+            Edit Category
+        </a>
+    <% } %>
 
     <% if (projects.length > 0) { %>
+
         <ul>
+
             <% projects.forEach(project => { %>
+
                 <li>
                     <a href="/project/<%= project.project_id %>">
                         <%= project.title %>
                     </a>
                 </li>
+
             <% }); %>
+
         </ul>
+
     <% } else { %>
+
         <p>No service projects found for this category.</p>
+
     <% } %>
+
 </main>
 
 <%- include('partials/footer') %>
