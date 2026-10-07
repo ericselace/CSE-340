@@ -19,8 +19,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 /**
-  * Configure Express middleware
-  */
+ * Configure Express middleware
+ */
 
 // Set up session management
 app.use(session({
@@ -51,12 +51,23 @@ app.use((req, res, next) => {
     if (NODE_ENV === 'development') {
         console.log(`${req.method} ${req.url}`);
     }
-    next(); // Pass control to the next middleware or route
+    next();
 });
 
-// Middleware to make NODE_ENV available to all templates
+// Middleware to make user information available to all templates
 app.use((req, res, next) => {
+    res.locals.isLoggedIn = false;
+    res.locals.user = null;
+    res.locals.userRole = null;
+
+    if (req.session && req.session.user) {
+        res.locals.isLoggedIn = true;
+        res.locals.user = req.session.user;
+        res.locals.userRole = req.session.user.role_name;
+    }
+
     res.locals.NODE_ENV = NODE_ENV;
+
     next();
 });
 
@@ -75,28 +86,27 @@ app.use((err, req, res, next) => {
     // Log error details for debugging
     console.error('Error occurred:', err.message);
     console.error('Stack trace:', err.stack);
-    
+
     // Determine status and template
     const status = err.status || 500;
     const template = status === 404 ? '404' : '500';
-    
+
     // Prepare data for the template
     const context = {
         title: status === 404 ? 'Page Not Found' : 'Server Error',
         error: err.message,
         stack: err.stack
     };
-    
-    // Render the appropriate error template
+
     res.status(status).render(`errors/${template}`, context);
 });
 
 app.listen(PORT, async () => {
-  try {
-    await testConnection();
-    console.log(`Server is running at http://127.0.0.1:${PORT}`);
-    console.log(`Environment: ${NODE_ENV}`);
-  } catch (error) {
-    console.error('Error connecting to the database:', error);
-  }
+    try {
+        await testConnection();
+        console.log(`Server is running at http://127.0.0.1:${PORT}`);
+        console.log(`Environment: ${NODE_ENV}`);
+    } catch (error) {
+        console.error('Error connecting to the database:', error);
+    }
 });
