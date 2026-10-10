@@ -8,6 +8,15 @@
     <p>Name: <%= name %></p>
 
     <p>Email: <%= email %></p>
+
+    <% if (locals.user && locals.user.role_name === 'admin') { %>
+        <section>
+            <h2>Administration</h2>
+            <p>
+                <a href="/users">Manage Users</a>
+            </p>
+        </section>
+    <% } %>
 </main>
 
 <%- include('partials/footer') %>
