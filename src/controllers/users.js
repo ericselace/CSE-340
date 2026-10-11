@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { createUser, authenticateUser } from '../models/users.js';
+import { createUser, authenticateUser , getAllUsers } from '../models/users.js';
 
 const showUserRegistrationForm = async (req, res) => {
     res.render('register', {
@@ -88,13 +88,33 @@ const requireRole = (role) => {
 };
 
 const showDashboard = async (req, res) => {
-    const { name, email } = req.session.user;
+    const { name, email, role_name } = req.session.user;
 
     res.render('dashboard', {
         title: 'Dashboard',
         name,
-        email
+        email,
+        user: {
+            name,
+            email,
+            role_name
+        }
     });
+};
+const showUsers = async (req, res) => {
+    try {
+        const users = await getAllUsers();
+
+        res.render('users', {
+            title: 'Registered Users',
+            users
+        });
+    } catch (error) {
+        console.error('Error retrieving users:', error);
+
+        req.flash('error', 'Unable to retrieve the users list.');
+        res.redirect('/dashboard');
+    }
 };
 
 const processUserRegistrationForm = async (req, res) => {
@@ -111,8 +131,8 @@ const processUserRegistrationForm = async (req, res) => {
     } catch (error) {
         console.error('Registration error:', error);
 
-        req.flash('notice', 'Registration failed. Please try again.');
-        res.redirect('/register');
+        req.flash('error', 'You do not have permission to access the users page.');
+        return res.redirect('/dashboard');
     }
 };
 
@@ -124,5 +144,7 @@ export {
     processLogout,
     requireLogin,
     requireRole,
-    showDashboard
+    showDashboard,
+    showUsers
+
 };
