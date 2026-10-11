@@ -146,6 +146,72 @@ main > ul > li {
 }
 
 /* ================================
+   Registration & Login Forms
+================================ */
+
+main form {
+    width: min(100%, 480px);
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+main form div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1.2rem;
+}
+
+main form label {
+    display: block;
+    font-weight: 600;
+    color: #123c4a;
+}
+
+main form input {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    font: inherit;
+    border: 1px solid #b0bec5;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #263238;
+}
+
+main form input:focus {
+    outline: 3px solid #f4b942;
+    outline-offset: 2px;
+    border-color: #123c4a;
+}
+
+main form button {
+    display: block;
+    width: 100%;
+    padding: 0.85rem;
+    background-color: #123c4a;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+main form button:hover {
+    background-color: #2a6678;
+}
+
+main form button:focus-visible {
+    outline: 3px solid #f4b942;
+    outline-offset: 3px;
+}
+
+/* ================================
    Footer
 ================================ */
 
@@ -235,6 +301,10 @@ footer p {
         height: 55px;
     }
 
+    main form {
+        padding: 1.25rem;
+    }
+
     .alert {
         width: 90%;
     }
@@ -249,7 +319,8 @@ footer p {
         scroll-behavior: auto;
     }
 
-    nav a {
+    nav a,
+    main form button {
         transition: none;
     }
 }
