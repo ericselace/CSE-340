@@ -3,15 +3,73 @@
 <main>
     <h1><%= title %></h1>
 
-    <h2>Dashboard</h2>
+    <section>
+        <h2>Dashboard</h2>
 
-    <p>Name: <%= name %></p>
+        <p>Name: <%= name %></p>
+        <p>Email: <%= email %></p>
+    </section>
 
-    <p>Email: <%= email %></p>
+    <section>
+        <h2>My Volunteer Projects</h2>
+
+        <% if (volunteerProjects && volunteerProjects.length > 0) { %>
+            <ul>
+                <% volunteerProjects.forEach(project => { %>
+                    <li>
+                        <h3>
+                            <a href="/project/<%= project.project_id %>">
+                                <%= project.title %>
+                            </a>
+                        </h3>
+
+                        <p>
+                            <strong>Organization:</strong>
+                            <%= project.organization_name %>
+                        </p>
+
+                        <p>
+                            <strong>Date:</strong>
+                            <%= new Date(project.date).toLocaleDateString() %>
+                        </p>
+
+                        <p>
+                            <strong>Location:</strong>
+                            <%= project.location %>
+                        </p>
+
+                        <form
+                            action="/project/<%= project.project_id %>/unvolunteer"
+                            method="POST"
+                        >
+                            <input
+                                type="hidden"
+                                name="returnTo"
+                                value="dashboard"
+                            >
+
+                            <button type="submit">
+                                Remove Me as Volunteer
+                            </button>
+                        </form>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p>
+                You have not signed up to volunteer for any projects yet.
+            </p>
+
+            <p>
+                <a href="/projects">Browse Service Projects</a>
+            </p>
+        <% } %>
+    </section>
 
     <% if (locals.user && locals.user.role_name === 'admin') { %>
         <section>
             <h2>Administration</h2>
+
             <p>
                 <a href="/users">Manage Users</a>
             </p>
