@@ -1,7 +1,6 @@
 <%- include('partials/header') %>
 
 <main>
-
     <h1><%= project.title %></h1>
 
     <p>
@@ -26,34 +25,80 @@
         </a>
     </p>
 
-    <p>
-        <strong>Categories:</strong>
-    </p>
+    <h2>Categories</h2>
 
-    <ul>
-        <% categories.forEach(category => { %>
-            <li>
-                <a href="/category/<%= category.category_id %>">
-                    <%= category.category_name %>
-                </a>
-            </li>
-        <% }); %>
-    </ul>
-
-    <% if (userRole === 'admin') { %>
-        <p>
-            <a href="/project/<%= project.project_id %>/assign-categories">
-                Edit Categories
-            </a>
-        </p>
-
-        <p>
-            <a href="/edit-project/<%= project.project_id %>">
-                Edit Project
-            </a>
-        </p>
+    <% if (categories && categories.length > 0) { %>
+        <ul>
+            <% categories.forEach(category => { %>
+                <li>
+                    <a href="/category/<%= category.category_id %>">
+                        <%= category.category_name %>
+                    </a>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>No categories assigned to this project.</p>
     <% } %>
 
+    <!-- Volunteer section -->
+    <section>
+        <h2>Volunteer for this project</h2>
+
+        <% if (user) { %>
+
+            <% if (isVolunteer) { %>
+                <p>You are already volunteering for this project.</p>
+
+                <form
+                    action="/project/<%= project.project_id %>/unvolunteer"
+                    method="POST"
+                >
+                    <button type="submit">
+                        Remove Me as Volunteer
+                    </button>
+                </form>
+
+            <% } else { %>
+                <p>Would you like to help with this project?</p>
+
+                <form
+                    action="/project/<%= project.project_id %>/volunteer"
+                    method="POST"
+                >
+                    <button type="submit">
+                        Become a Volunteer
+                    </button>
+                </form>
+            <% } %>
+
+        <% } else { %>
+            <p>
+                Please
+                <a href="/login">log in</a>
+                to volunteer for this project.
+            </p>
+        <% } %>
+    </section>
+
+    <!-- Admin controls -->
+    <% if (user && user.role_name === 'admin') { %>
+        <section>
+            <h2>Administration</h2>
+
+            <p>
+                <a href="/project/<%= project.project_id %>/assign-categories">
+                    Edit Categories
+                </a>
+            </p>
+
+            <p>
+                <a href="/edit-project/<%= project.project_id %>">
+                    Edit Project
+                </a>
+            </p>
+        </section>
+    <% } %>
 </main>
 
 <%- include('partials/footer') %>

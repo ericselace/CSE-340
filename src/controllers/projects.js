@@ -1,6 +1,12 @@
 import { body, validationResult } from 'express-validator';
 
 import {
+    addVolunteer,
+    removeVolunteer,
+    hasUserVolunteered
+} from '../models/volunteers.js';
+
+import {
     getUpcomingProjects,
     getProjectDetails,
     createProject,
@@ -8,7 +14,6 @@ import {
 } from '../models/projects.js';
 
 import { getCategoriesByProject } from '../models/categories.js';
-
 import { getAllOrganizations } from '../models/organizations.js';
 
 // Number of upcoming projects to display
@@ -52,39 +57,88 @@ const projectValidation = [
 
 // Display the upcoming service projects page
 const showProjectsPage = async (req, res) => {
-    const projects = await getUpcomingProjects(NUMBER_OF_UPCOMING_PROJECTS);
-    const title = 'Upcoming Service Projects';
+    try {
+        const projects = await getUpcomingProjects(
+            NUMBER_OF_UPCOMING_PROJECTS
+        );
 
-    res.render('projects', { title, projects });
+        const title = 'Upcoming Service Projects';
+
+        res.render('projects', {
+            title,
+            projects
+        });
+    } catch (error) {
+        console.error('Error loading project details:', error.message);
+        console.error(error.stack);
+
+        return res.status(500).send(
+            `Project details error: ${error.message}`
+        );
+    }
 };
 
 // Display the details of a single service project
 const showProjectDetailsPage = async (req, res) => {
     const id = req.params.id;
 
-    const project = await getProjectDetails(id);
-    const categories = await getCategoriesByProject(id);
-    const title = project.title;
+    try {
+        const project = await getProjectDetails(id);
 
-    res.render('project', { title, project, categories });
+        if (!project) {
+            req.flash('error', 'Project not found.');
+            return res.redirect('/projects');
+        }
+
+        const categories = await getCategoriesByProject(id);
+
+        const user = req.session?.user ?? null;
+        let isVolunteer = false;
+
+        if (user) {
+            isVolunteer = await hasUserVolunteered(
+                user.user_id,
+                project.project_id
+            );
+        }
+
+        const title = project.title;
+
+        return res.render('project', {
+            title,
+            project,
+            categories,
+            user,
+            isVolunteer
+        });
+    } catch (error) {
+        console.error('Error loading project details:', error);
+        req.flash('error', 'Unable to load project details.');
+        return res.redirect('/projects');
+    }
 };
 
 // Display the new project form
 const showNewProjectForm = async (req, res) => {
-    const organizations = await getAllOrganizations();
-    const title = 'Add New Project';
+    try {
+        const organizations = await getAllOrganizations();
+        const title = 'Add New Project';
 
-    res.render('new-project', {
-        title,
-        organizations
-    });
+        res.render('new-project', {
+            title,
+            organizations
+        });
+    } catch (error) {
+        console.error('Error loading new project form:', error);
+        req.flash('error', 'Unable to load the new project form.');
+        res.redirect('/projects');
+    }
 };
 
 // Process the new project form
 const processNewProjectForm = async (req, res) => {
     const results = validationResult(req);
 
-    // Check for validation errors
     if (!results.isEmpty()) {
         results.array().forEach((error) => {
             req.flash('error', error.msg);
@@ -101,39 +155,55 @@ const processNewProjectForm = async (req, res) => {
         date
     } = req.body;
 
-    await createProject(
-        title,
-        description,
-        location,
-        date,
-        organizationId
-    );
+    try {
+        await createProject(
+            title,
+            description,
+            location,
+            date,
+            organizationId
+        );
 
-    req.flash('success', 'Project added successfully!');
-
-    res.redirect('/projects');
+        req.flash('success', 'Project added successfully!');
+        return res.redirect('/projects');
+    } catch (error) {
+        console.error('Error creating project:', error);
+        req.flash('error', 'Unable to create the project.');
+        return res.redirect('/new-project');
+    }
 };
 
 // Display the edit project form
 const showEditProjectForm = async (req, res) => {
     const id = req.params.id;
 
-    const project = await getProjectDetails(id);
-    const organizations = await getAllOrganizations();
-    const title = `Edit ${project.title}`;
+    try {
+        const project = await getProjectDetails(id);
 
-    res.render('edit-project', {
-        title,
-        project,
-        organizations
-    });
+        if (!project) {
+            req.flash('error', 'Project not found.');
+            return res.redirect('/projects');
+        }
+
+        const organizations = await getAllOrganizations();
+        const title = `Edit ${project.title}`;
+
+        return res.render('edit-project', {
+            title,
+            project,
+            organizations
+        });
+    } catch (error) {
+        console.error('Error loading edit project form:', error);
+        req.flash('error', 'Unable to load the edit project form.');
+        return res.redirect('/projects');
+    }
 };
 
 // Process the edit project form
 const processEditProjectForm = async (req, res) => {
     const results = validationResult(req);
 
-    // Check for validation errors
     if (!results.isEmpty()) {
         results.array().forEach((error) => {
             req.flash('error', error.msg);
@@ -152,18 +222,106 @@ const processEditProjectForm = async (req, res) => {
         date
     } = req.body;
 
-    await updateProject(
-        projectId,
-        title,
-        description,
-        location,
-        date,
-        organizationId
-    );
+    try {
+        await updateProject(
+            projectId,
+            title,
+            description,
+            location,
+            date,
+            organizationId
+        );
 
-    req.flash('success', 'Project updated successfully!');
+        req.flash('success', 'Project updated successfully!');
+        return res.redirect(`/project/${projectId}`);
+    } catch (error) {
+        console.error('Error updating project:', error);
+        req.flash('error', 'Unable to update the project.');
+        return res.redirect(`/edit-project/${projectId}`);
+    }
+};
 
-    res.redirect(`/project/${projectId}`);
+// Sign up the logged-in user as a project volunteer
+const volunteerForProject = async (req, res) => {
+    const userId = req.session.user.user_id;
+    const projectId = req.params.id;
+
+    try {
+        const project = await getProjectDetails(projectId);
+
+        if (!project) {
+            req.flash('error', 'Project not found.');
+            return res.redirect('/projects');
+        }
+
+        const added = await addVolunteer(
+            userId,
+            project.project_id
+        );
+
+        if (added) {
+            req.flash(
+                'success',
+                'You are now volunteering for this project!'
+            );
+        } else {
+            req.flash(
+                'notice',
+                'You are already volunteering for this project.'
+            );
+        }
+
+        return res.redirect(`/project/${project.project_id}`);
+    } catch (error) {
+        console.error('Error signing up as volunteer:', error);
+        req.flash('error', 'Unable to sign up. Please try again.');
+        return res.redirect('/projects');
+    }
+};
+
+// Remove the logged-in user from a project's volunteer list
+const removeVolunteerFromProject = async (req, res) => {
+    const userId = req.session.user.user_id;
+    const projectId = req.params.id;
+
+    try {
+        const project = await getProjectDetails(projectId);
+
+        if (!project) {
+            req.flash('error', 'Project not found.');
+            return res.redirect('/dashboard');
+        }
+
+        const removed = await removeVolunteer(
+            userId,
+            project.project_id
+        );
+
+        if (removed) {
+            req.flash(
+                'success',
+                'You have been removed from this project.'
+            );
+        } else {
+            req.flash(
+                'notice',
+                'You were not signed up for this project.'
+            );
+        }
+
+        const returnToDashboard =
+            req.body?.returnTo === 'dashboard';
+
+        if (returnToDashboard) {
+            return res.redirect('/dashboard');
+        }
+
+        return res.redirect(`/project/${project.project_id}`);
+    } catch (error) {
+        console.error('Error removing volunteer:', error);
+        req.flash('error', 'Unable to remove your volunteer signup.');
+        return res.redirect('/dashboard');
+    }
 };
 
 // Export controller functions
@@ -174,5 +332,7 @@ export {
     processNewProjectForm,
     showEditProjectForm,
     processEditProjectForm,
-    projectValidation
+    projectValidation,
+    volunteerForProject,
+    removeVolunteerFromProject
 };
