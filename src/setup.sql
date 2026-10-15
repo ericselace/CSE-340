@@ -232,3 +232,18 @@ CREATE TABLE project_volunteers (
         REFERENCES project(project_id)
         ON DELETE CASCADE
 );
+CREATE TABLE IF NOT EXISTS public.project_volunteers (
+    user_id INTEGER NOT NULL,
+    project_id INTEGER NOT NULL,
+    signup_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (user_id, project_id),
+
+    FOREIGN KEY (user_id)
+        REFERENCES public.users(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (project_id)
+        REFERENCES public.project(project_id)
+        ON DELETE CASCADE
+);
